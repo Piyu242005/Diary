@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications - Diary App{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1 class="text-brown">
+                <i class="fas fa-bell"></i> Notifications
+            </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="text-brown mb-3">Notification Settings</h5>
+                    
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="dailyReminder" checked>
+                        <label class="form-check-label" for="dailyReminder">
+                            Daily Writing Reminder
+                        </label>
+                    </div>
+
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="emailNotif">
+                        <label class="form-check-label" for="emailNotif">
+                            Email Notifications
+                        </label>
+                    </div>
+
+                    <div class="alert alert-info mt-4">
+                        <i class="fas fa-info-circle"></i> You have no new notifications.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

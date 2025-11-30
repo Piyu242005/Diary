@@ -1,0 +1,484 @@
+{% extends "base.html" %}
+
+{% block title %}Photo Gallery - Piyu Diary{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Gallery Page Styles */
+.gallery-header {
+    margin-bottom: 3rem;
+}
+
+.gallery-header__title {
+    font-size: 2.5rem;
+    color: var(--secondary-color);
+    margin-bottom: 0.5rem;
+}
+
+.gallery-header__subtitle {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+/* Blog Card Styles */
+.blog-card {
+    display: flex;
+    flex-direction: row;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+    margin-bottom: 2rem;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    min-height: 280px;
+}
+
+.blog-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
+}
+
+/* Alternative gradient themes */
+.blog-card--blue {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.blog-card--orange {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.blog-card--teal {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.blog-card--green {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.blog-card--sunset {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.blog-card--dark {
+    background: linear-gradient(135deg, #434343 0%, #000000 100%);
+}
+
+/* Image Container */
+.blog-card__image-wrapper {
+    flex: 0 0 40%;
+    max-width: 40%;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.blog-card__image-container {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+.blog-card__image {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+.blog-card:hover .blog-card__image {
+    transform: scale(1.05);
+}
+
+/* Content Side */
+.blog-card__content {
+    flex: 1;
+    padding: 1.75rem 2rem 1.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    color: white;
+}
+
+/* Author Row */
+.blog-card__author {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.blog-card__author-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.blog-card__avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f5af19 0%, #f12711 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: white;
+    text-transform: uppercase;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    overflow: hidden;
+}
+
+.blog-card__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.blog-card__username {
+    font-weight: 600;
+    font-size: 1rem;
+    color: white;
+}
+
+.blog-card__menu {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    color: white;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.blog-card__menu:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* Title */
+.blog-card__title {
+    font-family: var(--font-heading);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Metadata Row */
+.blog-card__meta {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.blog-card__meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.blog-card__meta-item i {
+    font-size: 0.85rem;
+}
+
+.blog-card__mood {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.25rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+}
+
+/* Excerpt */
+.blog-card__excerpt {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    flex-grow: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Read More Link */
+.blog-card__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.blog-card__link:hover {
+    color: white;
+    gap: 0.75rem;
+}
+
+.blog-card__link i {
+    transition: transform 0.2s;
+}
+
+.blog-card__link:hover i {
+    transform: translateX(4px);
+}
+
+/* Empty State */
+.gallery-empty {
+    text-align: center;
+    padding: 5rem 2rem;
+    background: var(--card-bg);
+    border-radius: 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+.gallery-empty__icon {
+    font-size: 5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1.5rem;
+}
+
+.gallery-empty__title {
+    font-size: 1.5rem;
+    color: var(--secondary-color);
+    margin-bottom: 0.75rem;
+}
+
+.gallery-empty__text {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    max-width: 400px;
+    margin: 0 auto 1.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .blog-card {
+        flex-direction: column;
+        min-height: auto;
+    }
+    
+    .blog-card__image-wrapper {
+        flex: none;
+        max-width: 100%;
+        padding: 1rem 1rem 0.5rem;
+    }
+    
+    .blog-card__image {
+        height: 180px;
+    }
+    
+    .blog-card__content {
+        padding: 1rem 1.5rem 1.5rem;
+    }
+    
+    .blog-card__title {
+        font-size: 1.4rem;
+    }
+    
+    .blog-card__meta {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+}
+
+/* Dark Mode Adjustments */
+[data-theme="dark"] .blog-card {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .blog-card:hover {
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .blog-card__image-container {
+    background: var(--card-bg);
+}
+
+/* Dropdown menu styles */
+.blog-card__dropdown {
+    position: relative;
+}
+
+.blog-card__dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    padding: 0.5rem 0;
+    min-width: 150px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s;
+    z-index: 10;
+}
+
+.blog-card__dropdown:hover .blog-card__dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(5px);
+}
+
+.blog-card__dropdown-item {
+    display: block;
+    padding: 0.6rem 1rem;
+    color: var(--text-main);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.blog-card__dropdown-item:hover {
+    background: var(--primary-light);
+    color: var(--primary-color);
+}
+
+.blog-card__dropdown-item i {
+    width: 20px;
+    margin-right: 0.5rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container fade-in">
+    <!-- Header -->
+    <div class="gallery-header">
+        <h1 class="gallery-header__title">
+            <i class="fas fa-images me-2" style="color: var(--primary-color);"></i>
+            Photo Gallery
+        </h1>
+        <p class="gallery-header__subtitle">Browse through your diary entries with images</p>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="gallery-grid">
+        {% set entries_with_images = [] %}
+        {% for entry in current_user.entries %}
+            {% if entry.images|length > 0 %}
+                {% set _ = entries_with_images.append(entry) %}
+            {% endif %}
+        {% endfor %}
+
+        {% if entries_with_images %}
+            {% set gradients = ['blue', 'orange', 'teal', 'green', 'sunset', 'dark'] %}
+            {% set mood_emojis = {'happy': '😊', 'excited': '🤩', 'neutral': '😐', 'sad': '😢', 'angry': '😠'} %}
+            
+            {% for entry in entries_with_images %}
+            <article class="blog-card blog-card--{{ gradients[loop.index0 % 6] }}">
+                <!-- Image Side -->
+                <div class="blog-card__image-wrapper">
+                    <div class="blog-card__image-container">
+                        <img src="{{ url_for('static', filename='uploads/entries/' + entry.images[0].filename) }}" 
+                             alt="{{ entry.title }}" 
+                             class="blog-card__image">
+                    </div>
+                </div>
+                
+                <!-- Content Side -->
+                <div class="blog-card__content">
+                    <!-- Author Row -->
+                    <div class="blog-card__author">
+                        <div class="blog-card__author-info">
+                            <div class="blog-card__avatar">
+                                {% if current_user.profile_image and current_user.profile_image != 'default.jpg' %}
+                                    <img src="{{ url_for('static', filename='uploads/profiles/' + current_user.profile_image) }}" alt="Avatar">
+                                {% else %}
+                                    {{ current_user.username[0] }}
+                                {% endif %}
+                            </div>
+                            <span class="blog-card__username">{{ current_user.username }}</span>
+                        </div>
+                        <div class="blog-card__dropdown">
+                            <button class="blog-card__menu">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                            <div class="blog-card__dropdown-menu">
+                                <a href="{{ url_for('diary.entry_detail', id=entry.id) }}" class="blog-card__dropdown-item">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                                <a href="{{ url_for('diary.edit_entry', id=entry.id) }}" class="blog-card__dropdown-item">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Title -->
+                    <h2 class="blog-card__title">{{ entry.title }}</h2>
+                    
+                    <!-- Metadata -->
+                    <div class="blog-card__meta">
+                        <span class="blog-card__meta-item">
+                            <i class="far fa-calendar-alt"></i>
+                            {{ entry.date.strftime('%b %d, %Y') }}
+                        </span>
+                        <span class="blog-card__meta-item">
+                            <i class="far fa-clock"></i>
+                            {{ ((entry.content|striptags|length) / 1000)|round|int or 1 }} min read
+                        </span>
+                        {% if entry.mood %}
+                        <span class="blog-card__mood">
+                            {{ mood_emojis.get(entry.mood, '😐') }} {{ entry.mood|title }}
+                        </span>
+                        {% endif %}
+                        {% if entry.images|length > 1 %}
+                        <span class="blog-card__meta-item">
+                            <i class="fas fa-images"></i>
+                            {{ entry.images|length }} photos
+                        </span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Excerpt -->
+                    <p class="blog-card__excerpt">
+                        {{ entry.content|striptags|truncate(150) }}
+                    </p>
+                    
+                    <!-- Read More Link -->
+                    <a href="{{ url_for('diary.entry_detail', id=entry.id) }}" class="blog-card__link">
+                        Read more <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </article>
+            {% endfor %}
+        {% else %}
+            <!-- Empty State -->
+            <div class="gallery-empty">
+                <i class="fas fa-camera-retro gallery-empty__icon"></i>
+                <h3 class="gallery-empty__title">No photos yet</h3>
+                <p class="gallery-empty__text">
+                    Add photos to your diary entries to see them displayed beautifully here!
+                </p>
+                <a href="{{ url_for('diary.new_entry') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus me-2"></i> Create Entry with Photos
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

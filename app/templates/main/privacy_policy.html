@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy Policy - Diary App{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1 class="text-brown">
+                <i class="fas fa-shield-alt"></i> Privacy Policy
+            </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h4 class="text-brown">Your Privacy Matters</h4>
+                    <p>Last updated: {{ now.strftime('%B %d, %Y') if now else 'November 22, 2025' }}</p>
+
+                    <h5 class="mt-4">1. Information We Collect</h5>
+                    <p>We collect information you provide directly to us, including your email address, username, and diary entries.</p>
+
+                    <h5 class="mt-4">2. How We Use Your Information</h5>
+                    <p>Your information is used solely to provide and improve our diary service. We do not share your personal diary entries with anyone.</p>
+
+                    <h5 class="mt-4">3. Data Security</h5>
+                    <p>We implement industry-standard security measures to protect your data. All diary entries are encrypted and stored securely.</p>
+
+                    <h5 class="mt-4">4. Your Rights</h5>
+                    <p>You have the right to access, modify, or delete your data at any time through your account settings.</p>
+
+                    <h5 class="mt-4">5. Cookies</h5>
+                    <p>We use essential cookies to maintain your session and ensure the app functions properly.</p>
+
+                    <h5 class="mt-4">6. Contact Us</h5>
+                    <p>If you have any questions about this Privacy Policy, please contact us at privacy@diaryapp.com</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

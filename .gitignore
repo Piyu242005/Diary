@@ -1,0 +1,38 @@
+*.pyc
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment
+.env
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads
+app/static/uploads/*
+!app/static/uploads/.gitkeep
+!app/static/uploads/profiles/.gitkeep
+!app/static/uploads/entries/.gitkeep
+
+# Flask
+instance/
+.webassets-cache
+
+# Migrations
+migrations/

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Rate Us - Diary App{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1 class="text-brown">
+                <i class="fas fa-star"></i> Rate Our App
+            </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body p-4 text-center">
+                    <i class="fas fa-heart fa-3x text-brown mb-3"></i>
+                    <h3 class="mb-3">We'd love your feedback!</h3>
+                    <p class="text-muted mb-4">Your opinion helps us improve the app for everyone.</p>
+
+                    <div class="rating-stars mb-4">
+                        <i class="fas fa-star fa-2x text-warning mx-1"></i>
+                        <i class="fas fa-star fa-2x text-warning mx-1"></i>
+                        <i class="fas fa-star fa-2x text-warning mx-1"></i>
+                        <i class="fas fa-star fa-2x text-warning mx-1"></i>
+                        <i class="far fa-star fa-2x text-warning mx-1"></i>
+                    </div>
+
+                    <form>
+                        <div class="mb-3">
+                            <textarea class="form-control" rows="4" placeholder="Tell us what you think..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-brown btn-lg">Submit Review</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome - Diary App{% endblock %}
+
+{% block content %}
+<div class="onboarding-container">
+    <div class="row align-items-center vh-100">
+        <div class="col-md-6 offset-md-3 text-center">
+            <div class="onboarding-content">
+                <i class="fas fa-book-open fa-5x text-brown mb-4"></i>
+                <h1 class="display-4 text-brown mb-3">Welcome to Your Diary</h1>
+                <p class="lead mb-4">Capture your thoughts, memories, and moments in a beautiful digital diary.</p>
+                
+                <div class="features mb-4">
+                    <div class="feature-item mb-3">
+                        <i class="fas fa-lock text-brown"></i>
+                        <span>Private & Secure</span>
+                    </div>
+                    <div class="feature-item mb-3">
+                        <i class="fas fa-image text-brown"></i>
+                        <span>Add Photos</span>
+                    </div>
+                    <div class="feature-item mb-3">
+                        <i class="fas fa-calendar-alt text-brown"></i>
+                        <span>Daily Entries</span>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 col-md-6 mx-auto">
+                    <a href="{{ url_for('auth.signup') }}" class="btn btn-brown btn-lg mb-2">Get Started</a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-brown btn-lg">Already have an account? Log In</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}{{ entry.title }} - Diary App{% endblock %}
+
+{% block content %}
+<div class="container fade-in">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Back Navigation -->
+            <div class="mb-4">
+                <a href="{{ url_for('main.home') }}" class="btn btn-light">
+                    <i class="fas fa-arrow-left me-2"></i> Back to Home
+                </a>
+            </div>
+
+            <article class="card p-4 p-md-5">
+                <!-- Entry Header -->
+                <header class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <span class="date-badge">
+                            <i class="far fa-calendar-alt me-1"></i> {{ entry.date.strftime('%A, %B %d, %Y') }}
+                        </span>
+                        {% if entry.mood %}
+                        {% set mood_emojis = {'happy': '😊', 'excited': '🤩', 'neutral': '😐', 'sad': '😢', 'angry': '😠'} %}
+                        <span class="mood-badge px-3 py-2">
+                            <span class="mood-dot mood-{{ entry.mood }}"></span>
+                            {{ mood_emojis.get(entry.mood, '😐') }} {{ entry.mood|title }}
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <h1 class="display-5 mb-4" style="color: var(--secondary-color);">{{ entry.title }}</h1>
+
+                    <!-- Tags -->
+                    {% if entry.tags %}
+                    <div class="mb-4">
+                        {% for tag in entry.tags %}
+                        <a href="{{ url_for('main.home', tag=tag.name) }}" class="badge-tag text-decoration-none">
+                            #{{ tag.name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </header>
+
+                <!-- Entry Meta -->
+                <div class="entry-meta">
+                    <div>
+                        <i class="fas fa-clock me-1"></i>
+                        Created: {{ entry.created_at.strftime('%b %d, %Y at %I:%M %p') }}
+                    </div>
+                    {% if entry.updated_at != entry.created_at %}
+                    <div>
+                        <i class="fas fa-edit me-1"></i>
+                        Updated: {{ entry.updated_at.strftime('%b %d, %Y at %I:%M %p') }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Entry Content -->
+                <div class="entry-content my-4">
+                    {{ entry.content|safe }}
+                </div>
+
+                <!-- Attached Images -->
+                {% if entry.images %}
+                <div class="entry-images mb-4">
+                    <h5 class="mb-3">
+                        <i class="fas fa-images me-2" style="color: var(--primary-color);"></i>
+                        Attached Images
+                    </h5>
+                    <div class="row g-3">
+                        {% for image in entry.images %}
+                        <div class="col-md-6">
+                            <a href="{{ url_for('static', filename='uploads/entries/' + image.filename) }}" 
+                               target="_blank" class="d-block">
+                                <img src="{{ url_for('static', filename='uploads/entries/' + image.filename) }}"
+                                    class="img-fluid rounded shadow-sm" alt="Entry image"
+                                    style="width: 100%; object-fit: cover; max-height: 300px;">
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <hr>
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-2">
+                    <a href="{{ url_for('main.home') }}" class="btn btn-light">
+                        <i class="fas fa-arrow-left me-1"></i> All Entries
+                    </a>
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('diary.edit_entry', id=entry.id) }}" class="btn btn-outline-primary">
+                            <i class="fas fa-edit me-1"></i> Edit
+                        </a>
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
+                            data-bs-target="#deleteModal">
+                            <i class="fas fa-trash me-1"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 16px;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                    Delete Entry?
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body py-4">
+                <p class="mb-0">Are you sure you want to delete "<strong>{{ entry.title }}</strong>"?</p>
+                <p class="text-muted small mb-0 mt-2">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <form action="{{ url_for('diary.delete_entry', id=entry.id) }}" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i> Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

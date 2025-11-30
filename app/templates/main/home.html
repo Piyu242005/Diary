@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Diary App{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Dashboard Strip -->
+    <div class="row dashboard-strip fade-in">
+        <div class="col-md-4 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-book-open"></i></div>
+                <div class="stat-value">{{ stats.total_entries }}</div>
+                <div class="stat-label">Total Entries</div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                <div class="stat-value">{{ stats.entries_this_month }}</div>
+                <div class="stat-label">Entries This Month</div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-smile"></i></div>
+                <div class="stat-value">
+                    {% if stats.most_common_mood %}
+                    {% set mood_emojis = {'happy': '😊', 'excited': '🤩', 'neutral': '😐', 'sad': '😢', 'angry': '😠'} %}
+                    <span class="mood-emoji">{{ mood_emojis.get(stats.most_common_mood, '😐') }}</span>
+                    {{ stats.most_common_mood|title }}
+                    {% else %}
+                    <span class="text-muted">—</span>
+                    {% endif %}
+                </div>
+                <div class="stat-label">Most Common Mood</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header Section -->
+    <div class="page-header fade-in">
+        <div class="row align-items-center">
+            <div class="col-lg-5 mb-3 mb-lg-0">
+                <h1 class="page-title">Piyu Diary</h1>
+                <p class="welcome-text">Welcome back, <strong>{{ current_user.username }}</strong> 👋</p>
+            </div>
+            <div class="col-lg-7">
+                <div class="search-bar">
+                    <form action="{{ url_for('main.home') }}" method="GET" class="d-flex gap-2 flex-wrap">
+                        <div class="flex-grow-1">
+                            <input type="text" name="q" class="form-control search-input" 
+                                placeholder="🔍 Search entries..."
+                                value="{{ request.args.get('q', '') }}">
+                        </div>
+                        <select name="mood" class="form-select" style="width: auto; min-width: 150px;">
+                            <option value="">All Moods</option>
+                            <option value="happy" {% if request.args.get('mood')=='happy' %}selected{% endif %}>😊 Happy</option>
+                            <option value="excited" {% if request.args.get('mood')=='excited' %}selected{% endif %}>🤩 Excited</option>
+                            <option value="neutral" {% if request.args.get('mood')=='neutral' %}selected{% endif %}>😐 Neutral</option>
+                            <option value="sad" {% if request.args.get('mood')=='sad' %}selected{% endif %}>😢 Sad</option>
+                            <option value="angry" {% if request.args.get('mood')=='angry' %}selected{% endif %}>😠 Angry</option>
+                        </select>
+                        {% if request.args.get('tag') %}
+                        <input type="hidden" name="tag" value="{{ request.args.get('tag') }}">
+                        {% endif %}
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+                        {% if request.args.get('q') or request.args.get('mood') or request.args.get('tag') %}
+                        <a href="{{ url_for('main.home') }}" class="btn btn-outline-secondary" title="Clear filters">
+                            <i class="fas fa-times"></i>
+                        </a>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Filter Tags -->
+    {% if request.args.get('tag') %}
+    <div class="mb-4 fade-in">
+        <span class="text-muted me-2">Filtering by tag:</span>
+        <span class="badge-tag">
+            #{{ request.args.get('tag') }}
+            <a href="{{ url_for('main.home', q=request.args.get('q'), mood=request.args.get('mood')) }}" 
+               class="text-decoration-none ms-1" style="color: inherit;">×</a>
+        </span>
+    </div>
+    {% endif %}
+
+    <!-- Entries Grid -->
+    <div class="row" id="entriesGrid">
+        {% if entries %}
+        {% for entry in entries %}
+        <div class="col-md-6 col-lg-4 mb-4 entry-card">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <!-- Date & Mood Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="date-badge">
+                            <i class="far fa-calendar-alt me-1"></i> {{ entry.date.strftime('%b %d') }}
+                        </span>
+                        {% if entry.mood %}
+                        {% set mood_emojis = {'happy': '😊', 'excited': '🤩', 'neutral': '😐', 'sad': '😢', 'angry': '😠'} %}
+                        <span class="mood-badge">
+                            <span class="mood-dot mood-{{ entry.mood }}"></span>
+                            {{ mood_emojis.get(entry.mood, '😐') }} {{ entry.mood|title }}
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Entry Title -->
+                    <h5 class="card-title entry-title">
+                        <a href="{{ url_for('diary.entry_detail', id=entry.id) }}"
+                            class="text-decoration-none stretched-link">
+                            {{ entry.title }}
+                        </a>
+                    </h5>
+
+                    <!-- Entry Preview -->
+                    <p class="card-text flex-grow-1">
+                        {{ entry.content|striptags|truncate(100) }}
+                    </p>
+
+                    <!-- Tags -->
+                    {% if entry.tags %}
+                    <div class="mt-auto pt-3">
+                        {% for tag in entry.tags[:3] %}
+                        <span class="badge-tag">#{{ tag.name }}</span>
+                        {% endfor %}
+                        {% if entry.tags|length > 3 %}
+                        <span class="text-muted small">+{{ entry.tags|length - 3 }} more</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Images indicator -->
+                    {% if entry.images %}
+                    <div class="mt-2">
+                        <small class="text-muted"><i class="fas fa-image me-1"></i> {{ entry.images|length }} image(s)</small>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="col-12">
+            <div class="empty-state fade-in">
+                <i class="far fa-book-open"></i>
+                <h3>No entries yet</h3>
+                <p>Start your first diary note today. Capture your thoughts, feelings, and memories.</p>
+                <a href="{{ url_for('diary.new_entry') }}" class="btn btn-primary btn-lg mt-3">
+                    <i class="fas fa-plus me-2"></i> Create Your First Entry
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Add animation class when entries are visible
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.entry-card');
+    cards.forEach((card, index) => {
+        card.style.animationDelay = `${0.1 + (index * 0.05)}s`;
+    });
+});
+</script>
+{% endblock %}

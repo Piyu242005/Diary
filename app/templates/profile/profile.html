@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - Diary App{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1 class="text-brown">
+                <i class="fas fa-user"></i> Profile
+            </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body text-center">
+                    <img src="{{ url_for('static', filename='uploads/profiles/' + current_user.profile_image) 
+                              if current_user.profile_image != 'default.jpg' 
+                              else url_for('static', filename='images/default-avatar.png') }}" 
+                         class="rounded-circle mb-3" 
+                         style="width: 150px; height: 150px; object-fit: cover;" 
+                         alt="Profile picture">
+                    <h4 class="text-brown">{{ current_user.username }}</h4>
+                    <p class="text-muted">{{ current_user.email }}</p>
+                    <p class="text-muted small">
+                        <i class="fas fa-calendar"></i> Joined {{ current_user.created_at.strftime('%B %Y') }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="text-brown mb-3">Statistics</h5>
+                    <div class="mb-2">
+                        <strong>Total Entries:</strong> {{ current_user.entries|length }}
+                    </div>
+                    <div class="mb-2">
+                        <strong>Photos:</strong> 
+                        {% set photo_count = namespace(value=0) %}
+                        {% for entry in current_user.entries %}
+                            {% set photo_count.value = photo_count.value + entry.images|length %}
+                        {% endfor %}
+                        {{ photo_count.value }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="list-group">
+                <a href="{{ url_for('profile.account') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-user-edit text-brown"></i> Account Settings
+                </a>
+                <a href="{{ url_for('main.notifications') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-bell text-brown"></i> Notifications
+                </a>
+                <a href="{{ url_for('profile.language') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-language text-brown"></i> Language
+                </a>
+                <a href="{{ url_for('main.faq') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-question-circle text-brown"></i> FAQ
+                </a>
+                <a href="{{ url_for('main.rate_us') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-star text-brown"></i> Rate Us
+                </a>
+                <a href="{{ url_for('main.privacy_policy') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-shield-alt text-brown"></i> Privacy Policy
+                </a>
+                <a href="{{ url_for('auth.logout') }}" class="list-group-item list-group-item-action text-danger">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
